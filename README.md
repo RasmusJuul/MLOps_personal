@@ -3,6 +3,11 @@ MLOps
 
 Project for MLOps course jan 2022
 
+'make data' extracts and prepares the data for training
+'make train' trains a model on the prepared data
+'make predict' uses a pre-trained model for prediction the given data
+
+
 Project Organization
 ------------
 
