@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-import click
 import logging
 from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
-import torch
-from src.models.model import MyAwesomeModel
+
+import click
 import numpy as np
+import torch
+from dotenv import find_dotenv, load_dotenv
+
+from src.models.model import MyAwesomeModel
 
 
 @click.command()
 @click.argument("model_path", type=click.Path(exists=True))
-@click.argument(
-    "data_path", type=click.Path(exists=True)
-)  # Should be a numpy file with an array of images with shape [num,height,width]
+@click.argument("data_path", type=click.Path(exists=True))  # .npy file shape:[images,height,width]
 def predict(model_path, data_path):
     model = MyAwesomeModel()
     model.load_state_dict(torch.load(model_path))

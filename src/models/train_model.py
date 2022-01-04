@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-import click
 import logging
-from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
-import torch
-from src.models.model import MyAwesomeModel
-import tqdm
-import matplotlib.pyplot as plt
 import os
+from pathlib import Path
+
+import click
+import matplotlib.pyplot as plt
+import torch
+import tqdm
+from dotenv import find_dotenv, load_dotenv
+
 from src.data.make_dataset import load_data
+from src.models.model import MyAwesomeModel
 
 
 @click.command()
@@ -39,9 +41,7 @@ def train(lr, epochs):
         train_losses.append(running_loss)
 
     num = len(os.listdir("src/models/trained_models"))
-    torch.save(
-        model.state_dict(), "src/models/trained_models/trained_model_{}.pth".format(num)
-    )
+    torch.save(model.state_dict(), "src/models/trained_models/trained_model_{}.pth".format(num))
     plt.plot(train_losses)
     plt.ylabel("loss")
     plt.xlabel("epochs")

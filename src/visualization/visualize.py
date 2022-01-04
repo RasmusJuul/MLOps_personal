@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
 from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
-import torch
-from src.models.model import MyAwesomeModel
+
 import numpy as np
+import torch
+from dotenv import find_dotenv, load_dotenv
+
+from src.models.model import MyAwesomeModel
 
 
 @click.command()

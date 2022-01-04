@@ -1,5 +1,4 @@
-from torch import nn
-from torch import unsqueeze
+from torch import nn, unsqueeze
 from torch.nn.modules.conv import Conv2d
 
 

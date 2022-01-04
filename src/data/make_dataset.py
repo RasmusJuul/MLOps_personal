@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-import click
+import glob
 import logging
 from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
+
+import click
 import numpy as np
 import torch
-import glob
+from dotenv import find_dotenv, load_dotenv
 
 
 class dataset:
