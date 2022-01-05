@@ -1,0 +1,3 @@
+#predict.yaml
+data_path: "../../../data/prediction_images.npy"
+model_path: "../../../models/best/trained_model_best.pth"

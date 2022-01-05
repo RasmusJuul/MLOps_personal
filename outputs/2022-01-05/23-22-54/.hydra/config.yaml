@@ -1,0 +1,14 @@
+model:
+  model_type: cnn
+  droprate: 0.2
+  features: 4
+  num_blocks: 1
+training:
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.0001
+  seed: 42
+  force_cpu: true
+predict:
+  data_path: ../../../data/prediction_images.npy
+  model_path: ../../../models/best/trained_model_best.pth

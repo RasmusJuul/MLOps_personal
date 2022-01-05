@@ -31,11 +31,16 @@ data: requirements
 
 ## Train model
 train:
-	$(PYTHON_INTERPRETER) src/models/train_model.py 0.01 30
+	$(PYTHON_INTERPRETER) src/models/train_model.py
+	$(PYTHON_INTERPRETER) src/models/test_model.py
+
+## Test model
+test:
+	$(PYTHON_INTERPRETER) src/models/test_model.py
 
 ## Predict
 predict:
-	$(PYTHON_INTERPRETER) src/models/predict_model.py src/models/trained_models/trained_model_1.pth data/prediction_images.npy
+	$(PYTHON_INTERPRETER) src/models/predict_model.py
 
 ## Delete all compiled Python files
 clean:

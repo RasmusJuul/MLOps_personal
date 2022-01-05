@@ -1,0 +1,5 @@
+#model.yaml
+model_type: cnn
+droprate: 0.2
+features: 4
+num_blocks: 1

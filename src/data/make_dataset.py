@@ -9,30 +9,6 @@ import torch
 from dotenv import find_dotenv, load_dotenv
 
 
-class dataset:
-    def __init__(self, data, target):
-        self.data = data
-        self.target = target
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-        X = self.data[idx]
-        y = self.target[idx]
-
-        return X, y
-
-
-def load_data():
-    train_images = torch.load("data/processed/train_images.pt")
-    train_labels = torch.load("data/processed/train_labels.pt")
-
-    return dataset(train_images, train_labels)
-
-
 @click.command()
 @click.argument("input_filepath", type=click.Path(exists=True))
 @click.argument("output_filepath", type=click.Path())

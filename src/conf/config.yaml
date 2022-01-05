@@ -1,0 +1,5 @@
+#config.yaml
+defaults:
+  - model: model_1
+  - training: training_1
+  - predict: predict_1
