@@ -32,6 +32,7 @@ def train(cfg: DictConfig):
         device = torch.device("cpu")
     else:
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    logger.info(f"Running on {device}")
 
     if cfg.model.model_type.lower() == "cnn":
         model = CNN(features=cfg.model.features,
@@ -87,6 +88,7 @@ def train(cfg: DictConfig):
         train_losses.append(running_loss)
         train_acc.append(train_correct / len(trainloader.dataset))
 
+    os.makedirs("../../../models/", exist_ok=True)
     date = datetime.today().strftime('%d-%m-%y:%H%M')
     checkpoint = {'model_type':cfg.model.model_type,
                   'features':cfg.model.features,
