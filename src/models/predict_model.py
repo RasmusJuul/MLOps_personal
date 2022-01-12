@@ -8,7 +8,7 @@ import torch
 from dotenv import find_dotenv, load_dotenv
 from omegaconf import DictConfig, OmegaConf
 
-from src.models.model import ResNet, CNN
+from src.models.model import CNN, ResNet
 
 logger = logging.getLogger(__name__)
 
@@ -20,23 +20,24 @@ def predict(cfg):
     if cfg.training.force_cpu:
         device = torch.device("cpu")
     else:
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     checkpoint = torch.load(cfg.predict.model_path)
-    
-    if checkpoint['model_type'].lower() == "cnn":
-        model = CNN(features=checkpoint['features'],
-                    height=28,
-                    width=28,
-                    droprate=cfg.model.droprate)
-    elif checkpoint['model_type'].lower() == 'resnet':
-        model = ResNet(features=checkpoint['features'],
-                       height=28,
-                       width=28,
-                       droprate=checkpoint['droprate'],
-                       num_blocks=checkpoint['num_blocks'])
+
+    if checkpoint["model_type"].lower() == "cnn":
+        model = CNN(
+            features=checkpoint["features"], height=28, width=28, droprate=cfg.model.droprate
+        )
+    elif checkpoint["model_type"].lower() == "resnet":
+        model = ResNet(
+            features=checkpoint["features"],
+            height=28,
+            width=28,
+            droprate=checkpoint["droprate"],
+            num_blocks=checkpoint["num_blocks"],
+        )
     model.to(device)
-    model.load_state_dict(checkpoint['state_dict'])
+    model.load_state_dict(checkpoint["state_dict"])
 
     try:
         images = np.load(cfg.predict.data_path)

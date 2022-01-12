@@ -57,17 +57,16 @@ class ResNet(nn.Module):
             nn.Dropout(p=droprate),
             nn.ReLU(),
             nn.Linear(128, 10),
-            nn.LogSoftmax(dim=1)
+            nn.LogSoftmax(dim=1),
         )
 
-    def forward(self, x):
-        # adds and extra dimension [batch_size,28,28] -> [batch_size,1,28,28]
-        x = unsqueeze(x, dim=1)
+    def forward(self, x):  # [batch_size,1,28,28]
         x = self.blocks(x)
         # reshape x so it becomes flat, except for the first dimension (which is the minibatch)
         x = x.view(x.size(0), -1)
         out = self.fc(x)
         return out
+
 
 class CNN(nn.Module):
     def __init__(self, features, height, width, droprate):
@@ -77,15 +76,15 @@ class CNN(nn.Module):
             nn.Dropout(p=droprate),
             nn.ReLU(),
             nn.MaxPool2d(2, 2),  # Reduce image size by half  28x28 -> 14x14
-            nn.Conv2d(features, features*2, 3, 1, 1),
+            nn.Conv2d(features, features * 2, 3, 1, 1),
             nn.Dropout(p=droprate),
             nn.ReLU(),
-            nn.Conv2d(features*2, features*2, 3, 1, 1),
+            nn.Conv2d(features * 2, features * 2, 3, 1, 1),
             nn.ReLU(),
             nn.Dropout(p=droprate),
             nn.ReLU(),
             nn.MaxPool2d(2, 2),  # Reduce image size by half  14x14 -> 7x7
-            nn.Conv2d(features*2, features*4, 3, 1, 1),
+            nn.Conv2d(features * 2, features * 4, 3, 1, 1),
             nn.Dropout(p=droprate),
             nn.ReLU(),
         )
@@ -101,10 +100,7 @@ class CNN(nn.Module):
             nn.LogSoftmax(dim=1),
         )
 
-    def forward(self, x):  # [batch_size,28,28]
-        x = unsqueeze(
-            x, dim=1
-        )  # adds and extra dimension [batch_size,28,28] -> [batch_size,1,28,28]
+    def forward(self, x):  # [batch_size,1,28,28]
         x = self.conv(x)
         x = x.view(
             x.size(0), -1

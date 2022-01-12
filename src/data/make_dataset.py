@@ -52,6 +52,10 @@ def main(input_filepath, output_filepath):
     train_images = torch.nn.functional.normalize(train_images)
     test_images = torch.nn.functional.normalize(test_images)
 
+    # Add dimension
+    train_images = torch.unsqueeze(train_images, dim=1)
+    test_images = torch.unsqueeze(test_images, dim=1)
+
     # Save in processed folder
     torch.save(train_images, output_filepath + "/train_images.pt")
     torch.save(train_labels, output_filepath + "/train_labels.pt")

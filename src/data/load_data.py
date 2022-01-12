@@ -1,5 +1,7 @@
 import torch
 
+from src import _PATH_DATA
+
 
 class dataset:
     def __init__(self, data, target):
@@ -19,9 +21,9 @@ class dataset:
 
 
 def load_data():
-    train_images = torch.load("../../../data/processed/train_images.pt")
-    train_labels = torch.load("../../../data/processed/train_labels.pt")
-    test_images = torch.load("../../../data/processed/test_images.pt")
-    test_labels = torch.load("../../../data/processed/test_labels.pt")
+    train_images = torch.load(_PATH_DATA + "/processed/train_images.pt")
+    train_labels = torch.load(_PATH_DATA + "/processed/train_labels.pt")
+    test_images = torch.load(_PATH_DATA + "/processed/test_images.pt")
+    test_labels = torch.load(_PATH_DATA + "/processed/test_labels.pt")
 
     return dataset(train_images, train_labels), dataset(test_images, test_labels)

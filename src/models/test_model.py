@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-import logging
 import glob
+import json
+import logging
 from pathlib import Path
 from shutil import copy2
 
 import hydra
 import torch
-import json
 from dotenv import find_dotenv, load_dotenv
 from omegaconf import DictConfig, OmegaConf
 
 from src.data.load_data import load_data
-from src.models.model import ResNet, CNN
+from src.models.model import CNN, ResNet
 
 logger = logging.getLogger(__name__)
 
@@ -21,9 +21,9 @@ def test(cfg: DictConfig):
     logger.info((f"Configuration: \n {OmegaConf.to_yaml(cfg)}"))
 
     # Create dictionary with model filename as the key with the item being the full path
-    models_dict = {file[16:-4]:file for file in glob.glob('../../../models/*.pth')}
+    models_dict = {file[16:-4]: file for file in glob.glob("../../../models/*.pth")}
     # Loads the json file acc which has the test accuracy for all models
-    with open('../../../models/acc.json', 'r') as fp:
+    with open("../../../models/acc.json", "r") as fp:
         acc = json.load(fp)
 
     # Set seed for everything
@@ -37,29 +37,33 @@ def test(cfg: DictConfig):
     if cfg.training.force_cpu:
         device = torch.device("cpu")
     else:
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     for model_name in models_dict.keys():
         if model_name not in acc.keys():
-            logger.info(f'Testing: {model_name}')
+            logger.info(f"Testing: {model_name}")
             # Load model checkpoint
             checkpoint = torch.load(models_dict[model_name])
             # Initialize model
-            if checkpoint['model_type'].lower() == "cnn":
-                model = CNN(features=checkpoint['features'],
-                            height=28,
-                            width=28,
-                            droprate=cfg.model.droprate)
-            elif checkpoint['model_type'].lower() == 'resnet':
-                model = ResNet(features=checkpoint['features'],
-                               height=28,
-                               width=28,
-                               droprate=checkpoint['droprate'],
-                               num_blocks=checkpoint['num_blocks'])
+            if checkpoint["model_type"].lower() == "cnn":
+                model = CNN(
+                    features=checkpoint["features"],
+                    height=28,
+                    width=28,
+                    droprate=cfg.model.droprate,
+                )
+            elif checkpoint["model_type"].lower() == "resnet":
+                model = ResNet(
+                    features=checkpoint["features"],
+                    height=28,
+                    width=28,
+                    droprate=checkpoint["droprate"],
+                    num_blocks=checkpoint["num_blocks"],
+                )
             model.to(device)
             model.eval()
             # Load test dataset
-            _,test_set = load_data()
+            _, test_set = load_data()
             testloader = torch.utils.data.DataLoader(
                 test_set, batch_size=cfg.training.batch_size, shuffle=True
             )
@@ -76,14 +80,13 @@ def test(cfg: DictConfig):
 
                 equals = torch.cat(res)
                 accuracy = torch.mean(equals.type(torch.FloatTensor))
-                logger.info(f'Accuracy: {accuracy.item()*100}%')
-            acc[model_name] = accuracy.item()*100
+                logger.info(f"Accuracy: {accuracy.item()*100}%")
+            acc[model_name] = accuracy.item() * 100
 
-    with open('../../../models/acc.json', 'w') as fp:
+    with open("../../../models/acc.json", "w") as fp:
         json.dump(acc, fp)
-    
-    copy2(models_dict[max(acc,key=acc.get)],'../../../models/best/trained_model_best.pth')
 
+    copy2(models_dict[max(acc, key=acc.get)], "../../../models/best/trained_model_best.pth")
 
 
 def main():
@@ -104,6 +107,3 @@ if __name__ == "__main__":
     load_dotenv(find_dotenv())
 
     main()
-
-
-

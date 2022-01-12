@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+from datetime import datetime
 from pathlib import Path
 
 import hydra
@@ -9,10 +10,10 @@ import torch
 import tqdm
 from dotenv import find_dotenv, load_dotenv
 from omegaconf import DictConfig, OmegaConf
-from datetime import datetime
 
+from src import _PATH_MODELS, _PATH_REPORTS
 from src.data.load_data import load_data
-from src.models.model import ResNet, CNN
+from src.models.model import CNN, ResNet
 
 logger = logging.getLogger(__name__)
 
@@ -31,27 +32,26 @@ def train(cfg: DictConfig):
     if cfg.training.force_cpu:
         device = torch.device("cpu")
     else:
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Running on {device}")
 
     if cfg.model.model_type.lower() == "cnn":
-        model = CNN(features=cfg.model.features,
-                    height=28,
-                    width=28,
-                    droprate=cfg.model.droprate)
-    elif cfg.model.model_type.lower() == 'resnet':
-        model = ResNet(features=cfg.model.features,
-                       height=28,
-                       width=28,
-                       droprate=cfg.model.droprate,
-                       num_blocks=cfg.model.num_blocks)
+        model = CNN(features=cfg.model.features, height=28, width=28, droprate=cfg.model.droprate)
+    elif cfg.model.model_type.lower() == "resnet":
+        model = ResNet(
+            features=cfg.model.features,
+            height=28,
+            width=28,
+            droprate=cfg.model.droprate,
+            num_blocks=cfg.model.num_blocks,
+        )
     else:
         logger.error("Invalid model chosen")
         return None
     model.to(device)
     model.train()
 
-    train_set,_ = load_data()
+    train_set, _ = load_data()
     trainloader = torch.utils.data.DataLoader(
         train_set, batch_size=cfg.training.batch_size, shuffle=True
     )
@@ -89,28 +89,28 @@ def train(cfg: DictConfig):
         train_acc.append(train_correct / len(trainloader.dataset))
 
     os.makedirs("../../../models/", exist_ok=True)
-    date = datetime.today().strftime('%d-%m-%y:%H%M')
-    checkpoint = {'model_type':cfg.model.model_type,
-                  'features':cfg.model.features,
-                  'droprate':cfg.model.droprate,
-                  'num_blocks':cfg.model.num_blocks,
-                  'state_dict':model.state_dict()}
-    torch.save(
-        checkpoint, "../../../models/trained_model_{}.pth".format(date)
-    )
+    date = datetime.today().strftime("%d-%m-%y:%H%M")
+    checkpoint = {
+        "model_type": cfg.model.model_type,
+        "features": cfg.model.features,
+        "droprate": cfg.model.droprate,
+        "num_blocks": cfg.model.num_blocks,
+        "state_dict": model.state_dict(),
+    }
+    torch.save(checkpoint, _PATH_MODELS + "/trained_model_{}.pth".format(date))
     logger.info("Model saved")
-    os.makedirs("../../../reports/figures/", exist_ok=True)
+    os.makedirs(_PATH_REPORTS + "/figures/", exist_ok=True)
     plt.plot(train_losses)
     plt.title("Training loss")
     plt.ylabel("loss")
     plt.xlabel("epochs")
-    plt.savefig("../../../reports/figures/training_curve_{}.png".format(date))
+    plt.savefig(_PATH_REPORTS + "/figures/training_curve_{}.png".format(date))
     plt.figure()
     plt.plot(train_acc)
     plt.title("Training accuracy")
     plt.ylabel("accuracy")
     plt.xlabel("epochs")
-    plt.savefig("../../../reports/figures/training_acc_{}.png".format(date))
+    plt.savefig(_PATH_REPORTS + "/figures/training_acc_{}.png".format(date))
     logger.info("Graphs saved")
 
 
