@@ -11,10 +11,14 @@ WORKDIR /
 COPY requirements.txt requirements.txt
 COPY setup.py setup.py
 COPY src/ src/
-COPY data/ data/
+COPY data.dvc data.dvc
+
 
 
 RUN pip install -r requirements.txt --no-cache-dir
+
+RUN pip install dvc[gs]
+RUN dvc pull
 
 ENTRYPOINT ["python", "-u", "src/models/train_model.py"]
 
