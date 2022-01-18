@@ -14,12 +14,12 @@ COPY src/ src/
 COPY data.dvc data.dvc
 COPY .git/ .git/
 COPY .dvc/ .dvc/
-
+RUN mkdir data/
 
 RUN pip install -r requirements.txt --no-cache-dir
 
 RUN pip install dvc[gs]
-RUN dvc pull
+RUN dvc pull --no-scm
 
 ENTRYPOINT ["python", "-u", "src/models/train_model.py"]
 
